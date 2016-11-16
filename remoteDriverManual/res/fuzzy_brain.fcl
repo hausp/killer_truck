@@ -14,7 +14,7 @@ END_VAR
 FUZZIFY x
     TERM left   := TRAPE 0 0 0.1 0.47;
     // TERM center := 0.5;
-    TERM center := TRAPE 0.1 0.4 0.6 0.9;
+    TERM center := TRAPE 0.1 0.5 0.5 0.9;
     // TERM center := GAUSS 0.5 0.12;
     // TERM center := GBELL 0.05 2 0.5;
     TERM right  := TRAPE 0.53 0.9 1 1;
