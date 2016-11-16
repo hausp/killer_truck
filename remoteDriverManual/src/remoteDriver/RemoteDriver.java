@@ -40,7 +40,7 @@ public class RemoteDriver {
         double x, y;
         double angle;
         
-        String file = "src/remoteDriver/fuzzy_brain.fcl";
+        String file = "res/fuzzy_brain.fcl";
         FIS fis = FIS.load(file, true);
 
         if (fis == null) {
