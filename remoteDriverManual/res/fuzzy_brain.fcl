@@ -17,11 +17,12 @@ FUZZIFY x
     TERM center := TRAPE 0.1 0.5 0.5 0.9;
     // TERM center := GAUSS 0.5 0.12;
     // TERM center := GBELL 0.05 2 0.5;
-    TERM right  := TRAPE 0.53 0.9 1 1;
+    TERM right  := TRAPE 0.7 0.9 1 1;
 END_FUZZIFY
 
 FUZZIFY y
     TERM top    := TRAPE 0 0 0.1 0.45; 
+//    TERM center := TRAPE 0.1 0.5 0.5 0.9;
     TERM center := TRAPE 0.25 0.45 0.55 0.75;
     TERM bottom := TRAPE 0.55 0.9 1 1;
 END_FUZZIFY
@@ -35,14 +36,14 @@ FUZZIFY angle
     TERM west  := TRAPE 90 140 220 270;
     TERM north := TRAPE 0 50 130 180;
     TERM south := TRAPE 180 230 310 360;
-    // TERM east  := (0, 1) (10, 1) (90, 0) (270, 0) (350, 1) (360, 1);
-    // TERM west  := TRAPE 90 170 190 270;
-    // TERM north := TRAPE 10 80 100 170;
-    // TERM south := TRAPE 190 260 280 350;
-//  TERM northeast := TRAPE 0 30 60 90;
-//  TERM northwest := TRAPE 90 120 150 180;
-//  TERM southeast := TRAPE 270 300 330 360;
-//  TERM southwest := TRAPE 180 210 240 270;
+//     TERM east  := (0, 1) (10, 1) (90, 0) (270, 0) (350, 1) (360, 1);
+//     TERM west  := TRAPE 90 170 190 270;
+//     TERM north := TRAPE 10 80 100 170;
+//     TERM south := TRAPE 190 260 280 350;
+  TERM northeast := TRAPE 0 30 60 90;
+  TERM northwest := TRAPE 90 120 150 180;
+  TERM southeast := TRAPE 270 300 330 360;
+  TERM southwest := TRAPE 180 210 240 270;
 END_FUZZIFY
 
 DEFUZZIFY offset 
@@ -72,6 +73,15 @@ RULEBLOCK No1
     RULE 10 : IF x IS right AND angle IS north THEN offset IS negative;
     RULE 11 : IF x IS right AND angle IS west THEN offset IS negative;
     RULE 12 : IF x IS right AND angle IS south THEN offset IS positive;
+
+    RULE 13 : IF x IS left AND angle IS southwest THEN offset IS positive;
+    RULE 14 : IF x IS left AND angle IS northeast THEN offset IS positive;
+    
+    RULE 15 : IF x IS center AND angle IS southwest THEN offset IS negative;
+    RULE 16 : IF x IS center AND angle IS northeast THEN offset IS positive;
+    
+    RULE 17 : IF x IS right AND angle IS southwest THEN offset IS positive;
+    RULE 18 : IF x IS right AND angle IS northeast THEN offset IS negative;
     
 /*  RULE 3 : IF x IS left AND y IS bottom AND angle IS northwest THEN offset IS right;
 
