@@ -12,43 +12,32 @@ VAR_OUTPUT
 END_VAR
 
 FUZZIFY x
-    TERM left   := TRAPE 0 0 0.1 0.47;
-    // TERM center := 0.5;
-    TERM center := TRAPE 0.1 0.5 0.5 0.9;
-    // TERM center := GAUSS 0.5 0.12;
-    // TERM center := GBELL 0.05 2 0.5;
-    TERM right  := TRAPE 0.53 0.9 1 1;
+    TERM left   := (0, 1) (0.35, 0.5) (0.5, 0);
+    TERM center := TRAPE 0.0 0.45 0.55 1;
+    TERM right  := (0.5, 0) (0.65, 0.5) (1, 1);
 END_FUZZIFY
 
 FUZZIFY y
-    TERM top    := TRAPE 0 0 0.1 0.45; 
+    TERM top    := TRAPE 0 0 0 0.3; 
     TERM center := TRAPE 0.25 0.45 0.55 0.75;
-    TERM bottom := TRAPE 0.55 0.9 1 1;
+    TERM bottom := TRAPE 0.7 1 1 1;
 END_FUZZIFY
 
 FUZZIFY angle
-    // TERM east  := (0, 1) (10, 1) (60, 0) (300, 0) (350, 1) (360, 1);
-    // TERM west  := GAUSS 180 20;
-    // TERM north := GAUSS 90 20;
-    // TERM south := GAUSS 270 20;
-    TERM east  := (0, 1) (40, 1) (90, 0) (270, 0) (320, 1) (360, 1);
-    TERM west  := TRAPE 90 140 220 270;
-    TERM north := TRAPE 0 50 130 180;
-    TERM south := TRAPE 180 230 310 360;
-    // TERM east  := (0, 1) (10, 1) (90, 0) (270, 0) (350, 1) (360, 1);
-    // TERM west  := TRAPE 90 170 190 270;
-    // TERM north := TRAPE 10 80 100 170;
-    // TERM south := TRAPE 190 260 280 350;
-//  TERM northeast := TRAPE 0 30 60 90;
-//  TERM northwest := TRAPE 90 120 150 180;
-//  TERM southeast := TRAPE 270 300 330 360;
-//  TERM southwest := TRAPE 180 210 240 270;
+    TERM east  := (0, 1) (2.5, 1) (90, 0) (270, 0) (357.5, 1) (360, 1);
+    TERM west  := TRAPE 90 177.5 182.5 270;
+    TERM north := TRAPE 0 87.5 92.5 180;
+    TERM south := TRAPE 180 267.5 272.5 360;
+    TERM northeast := TRAPE 0 30 60 90;
+    TERM northwest := TRAPE 90 120 150 180;
+    TERM southeast := TRAPE 270 300 330 360;
+    TERM southwest := TRAPE 180 210 240 270;
 END_FUZZIFY
 
 DEFUZZIFY offset 
-    TERM negative := TRAPE -1 -1 -0.8 -0.1;
+    TERM negative := TRAPE -1 -1 -0.8 0;
     TERM zero     := TRAPE -0.5 -0.1 0.1 0.5;
-    TERM positive := TRAPE 0.1 0.8 1 1;
+    TERM positive := TRAPE 0 0.8 1 1;
     METHOD      : COG;      // Use 'Center Of Gravity' defuzzification method
     DEFAULT     := 0;       // Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -58,35 +47,48 @@ RULEBLOCK No1
     ACT  : MIN;         // Use 'min' activation method
     ACCU : MAX;         // Use 'max' accumulation method
 
-    RULE 1  : IF x IS left AND angle IS east THEN offset IS positive;
+    RULE 1  : IF x IS left AND angle IS east  THEN offset IS positive;
     RULE 2  : IF x IS left AND angle IS north THEN offset IS positive;
-    RULE 3  : IF x IS left AND angle IS west THEN offset IS negative;
+    RULE 3  : IF x IS left AND angle IS west  THEN offset IS zero;
     RULE 4  : IF x IS left AND angle IS south THEN offset IS negative;
     
-    RULE 5  : IF x IS center AND angle IS east  THEN offset IS positive;
-    RULE 6  : IF x IS center AND angle IS north THEN offset IS zero;
-    RULE 7  : IF x IS center AND angle IS west  THEN offset IS negative;
-    RULE 8  : IF x IS center AND angle IS south THEN offset IS positive;
-    
-    RULE 9  : IF x IS right AND angle IS east THEN offset IS positive;
-    RULE 10 : IF x IS right AND angle IS north THEN offset IS negative;
-    RULE 11 : IF x IS right AND angle IS west THEN offset IS negative;
-    RULE 12 : IF x IS right AND angle IS south THEN offset IS positive;
-    
-/*  RULE 3 : IF x IS left AND y IS bottom AND angle IS northwest THEN offset IS right;
+    RULE 5  : IF x IS left AND angle IS southeast THEN offset IS negative;
+    RULE 6  : IF x IS left AND angle IS northeast THEN offset IS positive;
+    RULE 7  : IF x IS left AND angle IS southwest THEN offset IS negative;
+    RULE 8  : IF x IS left AND angle IS northwest THEN offset IS zero;
 
-    RULE 4 : IF x IS left AND angle IS southeast THEN offset IS right;
-    RULE 5 : IF x IS left AND angle IS southwest THEN offset IS left;
+    RULE 9  : IF x IS center AND angle IS east THEN offset IS positive;
+    // RULE 10 : IF x IS center AND angle IS north THEN offset IS zero;
+    RULE 11 : IF x IS center AND angle IS west THEN offset IS negative;
+
+    // Regra da convergência
+    RULE 12 : IF y IS bottom AND angle IS north THEN offset IS zero;
+
+    // RULE 12 : IF x IS center AND angle IS southeast THEN offset IS negative;
+    RULE 13 : IF x IS center AND angle IS northeast THEN offset IS positive;
+    // RULE 14 : IF x IS center AND angle IS southwest THEN offset IS negative;
+    RULE 15 : IF x IS center AND angle IS northwest THEN offset IS negative;
+
+    RULE 17 : IF x IS right AND angle IS east THEN offset IS zero;
+    RULE 18 : IF x IS right AND angle IS north THEN offset IS negative;
+    RULE 19 : IF x IS right AND angle IS west THEN offset IS positive;
+    RULE 20 : IF x IS right AND angle IS south THEN offset IS positive;
+
+    // RULE 1  : IF x IS left AND angle IS east THEN offset IS positive;
+    // RULE 2  : IF x IS left AND angle IS north THEN offset IS positive;
+    // RULE 3  : IF x IS left AND angle IS west THEN offset IS negative;
+    // RULE 4  : IF x IS left AND angle IS south THEN offset IS negative;
     
-    RULE 6 : IF x IS right AND angle IS northwest THEN offset IS left;
-    RULE 8 : IF x IS right AND angle IS northeast THEN offset IS left;
+    // RULE 5  : IF x IS center AND angle IS east  THEN offset IS positive;
+    // RULE 6  : IF x IS center AND angle IS north THEN offset IS zero;
+    // RULE 7  : IF x IS center AND angle IS west  THEN offset IS negative;
+    // RULE 8  : IF x IS center AND angle IS south THEN offset IS positive;
+    
+    // RULE 9  : IF x IS right AND angle IS east THEN offset IS positive;
+    // RULE 10 : IF x IS right AND angle IS north THEN offset IS negative;
+    // RULE 11 : IF x IS right AND angle IS west THEN offset IS negative;
+    // RULE 12 : IF x IS right AND angle IS south THEN offset IS positive;
 
-    RULE 9 : IF x IS right AND angle IS southeast THEN offset IS left;
-    RULE 10 : IF x IS right AND angle IS southwest THEN offset IS right;
-
-    RULE 11 : IF x IS center AND angle IS northeast THEN offset IS right;
-    RULE 12 : IF x IS center AND angle IS northwest THEN offset IS left;
-*/
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
